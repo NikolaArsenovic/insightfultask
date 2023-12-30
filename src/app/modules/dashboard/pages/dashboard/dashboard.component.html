@@ -1,0 +1,12 @@
+
+
+<div class="dashboard-wrapper">
+  <div class="employees">
+    <app-employee-details-table></app-employee-details-table>
+  </div>
+
+  <div *ngIf="shifts$ | async as shifts">
+    {{shifts.length}}
+  </div>
+</div>
+

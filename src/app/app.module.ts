@@ -5,6 +5,7 @@ import { CoreModule } from './core/core.module';
 import { Environment } from './core/models/environment.model';
 import { NgModule } from '@angular/core';
 import { environment } from 'src/environments/environment';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
   declarations: [
@@ -13,7 +14,8 @@ import { environment } from 'src/environments/environment';
   imports: [
     BrowserModule,
     AppRoutingModule,
-    CoreModule
+    CoreModule,
+    BrowserAnimationsModule
   ],
   providers: [
     { provide: Environment, useValue: environment },

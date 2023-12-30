@@ -1,5 +1,5 @@
 <div class="employee-table-wrapper">
-  <table mat-table [dataSource]="employees" class="mat-elevation-z8" aria-label="Employee Details Table">
+  <table mat-table [dataSource]="employees" aria-label="Employee Details Table">
 
     <!-- Checkbox Column -->
     <ng-container matColumnDef="select">
@@ -33,20 +33,20 @@
 
     <!-- Clocked in time Column -->
     <ng-container matColumnDef="clockedInTime">
-      <th mat-header-cell *matHeaderCellDef> Clocked in time </th>
-      <td mat-cell *matCellDef="let element"> {{element.hourlyRate | currency}} </td>
+      <th mat-header-cell *matHeaderCellDef> Clocked in time (Hours) </th>
+      <td mat-cell *matCellDef="let element"> {{element.clockedInTime}} </td>
     </ng-container>
 
     <!-- Paid for regular hours Column -->
     <ng-container matColumnDef="paidForRegularHours">
       <th mat-header-cell *matHeaderCellDef> Paid For Regular Hours </th>
-      <td mat-cell *matCellDef="let element"> {{element.hourlyRate | currency}} </td>
+      <td mat-cell *matCellDef="let element"> {{element.paidForRegularHours | currency}} </td>
     </ng-container>
 
     <!-- Paid for regular hours Column -->
     <ng-container matColumnDef="paidForOvertimeHours">
       <th mat-header-cell *matHeaderCellDef> Paid For Overtime Hours </th>
-      <td mat-cell *matCellDef="let element"> {{element.hourlyRate | currency}} </td>
+      <td mat-cell *matCellDef="let element"> {{element.paidForOvertimeHours | currency}} </td>
     </ng-container>
 
     <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>

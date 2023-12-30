@@ -1,10 +1,14 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
-
+import { InfoCardComponent } from './info-card/info-card.component';
+import { NgModule } from '@angular/core';
 
 @NgModule({
-  declarations: [],
+  declarations: [
+    InfoCardComponent
+  ],
+  exports: [
+    InfoCardComponent
+  ],
   imports: [
     CommonModule
   ]

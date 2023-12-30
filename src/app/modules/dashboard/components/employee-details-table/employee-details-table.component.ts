@@ -20,7 +20,7 @@ export class EmployeeDetailsTableComponent implements OnInit{
   selection = new SelectionModel<Employee>(true, []);
 
   ngOnInit(): void {
-    this.employeeService.getEmployees().subscribe((employees) => {
+    this.employeeService.employees$.subscribe((employees) => {
       this.employees = employees;
       this.changeDetectorRef.detectChanges();
     });

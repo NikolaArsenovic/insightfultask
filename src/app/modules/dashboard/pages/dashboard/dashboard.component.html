@@ -1,12 +1,15 @@
 
 
 <div class="dashboard-wrapper">
-  <div class="employees">
-    <app-employee-details-table></app-employee-details-table>
+  <div class="info">
+    <app-info-card title="Total Number of Employees" [text]="numberOfEmployees$ | async"></app-info-card>
+    <app-info-card title="Clocked in Time (Hours)" [text]="totalClockedInHours$ | async"></app-info-card>
+    <app-info-card title="Total regular hours paid" [text]="totalRegularHoursPaid$ | async | currency"></app-info-card>
+    <app-info-card title="Total overtime hours paid" [text]="totalOvertimeHoursPaid$ | async | currency"></app-info-card>
   </div>
 
-  <div *ngIf="shifts$ | async as shifts">
-    {{shifts.length}}
+  <div class="employees mat-elevation-z6">
+    <app-employee-details-table></app-employee-details-table>
   </div>
 </div>
 

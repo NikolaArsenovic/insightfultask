@@ -4,6 +4,7 @@ import {
   Component,
   Inject,
   OnInit,
+  Optional,
   inject,
 } from '@angular/core';
 import { DialogData } from './dialog-data.model';
@@ -31,7 +32,7 @@ export class BulkEditModalComponent implements OnInit {
     return this.bulkForm.get('employees') as FormArray;
   }
 
-  constructor(public dialogRef: MatDialogRef<BulkEditModalComponent>,@Inject(DIALOG_DATA) public data: DialogData) {}
+  constructor(@Optional() public dialogRef: MatDialogRef<BulkEditModalComponent>,@Optional() @Inject(DIALOG_DATA) public data: DialogData) {}
 
   ngOnInit(): void {
     if(this.data.employees) {

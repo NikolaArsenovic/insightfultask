@@ -6,69 +6,6 @@ import { HttpClient } from '@angular/common/http';
 import { Shift } from '../models/shift.model';
 import { UtilService } from './util.service';
 
-// const employeesMock: Employee[] = [
-//   {
-//     id: '1',
-//     name: 'John Doe',
-//     email: 'doe@gmail.com',
-//     hourlyRate: 10.0,
-//     hourlyRateOvertime: 20.0,
-//     shifts: []
-//   },
-//   {
-//     id: '2',
-//     name: 'John Doe 2',
-//     email: 'doe2@gmail.com',
-//     hourlyRate: 10.0,
-//     hourlyRateOvertime: 20.0,
-//     shifts: []
-//   }];
-
-//   const shiftsMock: Shift[] = [
-//     {
-//       employeeId: '1',
-//       id: '1',
-//       clockIn: new Date('2020-01-01T09:00:00').getTime(),
-//       clockOut: new Date('2020-01-01T12:00:00').getTime()
-//     },
-//     {
-//       employeeId: '1',
-//       id: '2',
-//       clockIn: new Date('2020-01-01T16:00:00').getTime(),
-//       clockOut: new Date('2020-01-01T22:00:00').getTime()
-//     },
-//     {
-//       employeeId: '1',
-//       id: '3',
-//       clockIn: new Date('2020-01-01T23:00:00').getTime(),
-//       clockOut: new Date('2020-01-02T01:00:00').getTime()
-//     },
-//     {
-//       employeeId: '1',
-//       id: '4',
-//       clockIn: new Date('2020-01-10T23:00:00').getTime(),
-//       clockOut: new Date('2020-01-11T01:00:00').getTime()
-//     },
-//     {
-//       employeeId: '2',
-//       id: '4',
-//       clockIn: new Date('2020-01-01T09:00:00').getTime(),
-//       clockOut: new Date('2020-01-01T12:00:00').getTime()
-//     },
-//     {
-//       employeeId: '2',
-//       id: '5',
-//       clockIn: new Date('2020-01-01T16:00:00').getTime(),
-//       clockOut: new Date('2020-01-01T22:00:00').getTime()
-//     },
-//     {
-//       employeeId: '2',
-//       id: '6',
-//       clockIn: new Date('2020-01-01T23:00:00').getTime(),
-//       clockOut: new Date('2020-01-02T01:00:00').getTime()
-//     }
-//   ];
-
 @Injectable({
   providedIn: 'root'
 })

@@ -1,6 +1,12 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { DashboardComponent } from './dashboard.component';
+import { EmployeeDetailsTableComponent } from '../../components/employee-details-table/employee-details-table.component';
+import { HttpClientModule } from '@angular/common/http';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatTableModule } from '@angular/material/table';
+import { SharedModule } from 'src/app/shared/shared.module';
 
 describe('DashboardComponent', () => {
   let component: DashboardComponent;
@@ -8,7 +14,14 @@ describe('DashboardComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ DashboardComponent ]
+      imports: [
+        HttpClientModule,
+        MatDialogModule,
+        SharedModule,
+        MatTableModule,
+        MatCheckboxModule
+      ],
+      declarations: [ DashboardComponent, EmployeeDetailsTableComponent ]
     })
     .compileComponents();
 

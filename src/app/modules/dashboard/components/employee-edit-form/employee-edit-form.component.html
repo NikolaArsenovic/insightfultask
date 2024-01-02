@@ -1,0 +1,78 @@
+<div class="employee-edit-form">
+  <div class="title">
+    <h3>{{employee?.name}}</h3>
+  </div>
+  <div class="employee-fields">
+    <form [formGroup]="employeeForm">
+      <mat-form-field class="field">
+        <mat-label>Employee Name:</mat-label>
+        <input type="text" matInput formControlName="name" placeholder="Ex. John Doe">
+        <mat-error *ngIf="employeeForm.controls.name.hasError('required')">Employee Name is <strong>required</strong></mat-error>
+      </mat-form-field>
+      <mat-form-field class="field">
+        <mat-label>Employee hourly rate:</mat-label>
+        <input type="number" matInput formControlName="regularRate" placeholder="Ex. 10.0">
+        <mat-error *ngIf="employeeForm.controls.regularRate.hasError('required')">Employee hourly rate is <strong>required</strong></mat-error>
+      </mat-form-field>
+      <mat-form-field class="field">
+        <mat-label>Employee overtime hourly rate:</mat-label>
+        <input type="number" matInput formControlName="overtimeRate" placeholder="Ex. 10.0">
+        <mat-error *ngIf="employeeForm.controls.overtimeRate.hasError('required')">Employee overtime hourly rate is <strong>required</strong></mat-error>
+      </mat-form-field>
+    </form>
+  </div>
+<div class="shifts">
+  <div class="shifts-header">
+    <h3>Shifts</h3>
+    <mat-form-field class="date-field">
+      <mat-label>Choose date</mat-label>
+      <mat-select [disabled]="shiftsForm.dirty" (selectionChange)="addShiftsToForm()" [(value)]="selectedDate">
+          <ng-container *ngFor="let date of dates">
+            <mat-option [value]="date">{{formatDate(date)}}</mat-option>
+          </ng-container>
+      </mat-select>
+    </mat-form-field>
+  </div>
+  <div class="table">
+    <div class="row header">
+      <span class="item">Shift</span>
+      <span class="item">Clock in time</span>
+      <span class="item">Clock out time</span>
+      <span class="item center-text">Total time</span>
+    </div>
+    <form [formGroup]="shiftsForm" class="rows">
+      <ng-container formArrayName="shifts">
+        <ng-container *ngFor="let shift of shiftsFormArray.controls; let i = index">
+          <div class="row" formGroupName="{{i}}">
+            <div class="item shift-column-title">Shift {{i + 1}}</div>
+            <div class="item">
+              <mat-form-field class="time-field">
+                 <!-- Clock In -->
+                <input type="time" matInput
+                  appTimeRangeValidator
+                  [control]="shift.get('clockIn')"
+                  [min]="i === 0 ? '00:00' : shiftsFormArray.controls[i-1].get('clockOut')?.value"
+                  [max]="i === shiftsFormArray.controls.length - 1 ? '24:00' : shift.get('clockOut')?.value"
+                  formControlName="clockIn" placeholder="Ex. 11:20">
+                <mat-error *ngIf="shift.get('clockIn')?.errors">Employee overtime hourly rate is <strong>required</strong></mat-error>
+              </mat-form-field>
+            </div>
+            <div class="item">
+              <mat-form-field class="time-field">
+                <!-- Clock Out -->
+                <input type="time" matInput
+                  appTimeRangeValidator
+                  [control]="shift.get('clockOut')"
+                  [min]="shift.get('clockIn')?.value"
+                  [max]="i === shiftsFormArray.controls.length - 1 ? '24:00' : shiftsFormArray.controls[i+1].get('clockIn')?.value"
+                  formControlName="clockOut" placeholder="Ex. 11:20">
+              </mat-form-field>
+            </div>
+            <span class="item center-text">{{ calculateTotalTime(shift.get('clockIn')?.value, shift.get('clockOut')?.value, shift.get('shiftId')?.value)}}</span>
+          </div>
+        </ng-container>
+      </ng-container>
+    </form>
+  </div>
+</div>
+</div>

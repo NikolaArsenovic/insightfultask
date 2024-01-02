@@ -1,0 +1,63 @@
+.employee-edit-form {
+
+  .employee-fields {
+    form {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+
+      .field {
+        margin-bottom: 10px;
+        width: 35%;
+      }
+    }
+  }
+  .shifts {
+    .shifts-header {
+      display: flex;
+      justify-content: space-between;
+
+      h3 {
+        align-self: center;
+      }
+    }
+
+    .table {
+      width: 100%;
+
+      .header {
+        background-color: #ccc;
+        scrollbar-gutter: stable;
+        overflow: auto;
+      }
+
+      .row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px;
+        border-bottom: 1px solid #ccc;
+
+        .item {
+          width: 25%;
+
+        }
+
+        span {
+          font-weight: 500;
+          font-size: 14px;
+        }
+
+        .center-text {
+          text-align: center;
+        }
+      }
+
+      .rows {
+        height: 300px;
+        overflow: auto;
+        scrollbar-gutter: stable;
+      }
+    }
+  }
+}

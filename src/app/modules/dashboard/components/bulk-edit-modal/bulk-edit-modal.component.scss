@@ -6,8 +6,25 @@
     position: sticky;
     top: 0;
     left: 0;
+    z-index: 10;
+    background-color: white;
   }
   .content {
     padding: 15px;
+    z-index: 1;
+  }
+  .action-buttons {
+    position: sticky;
+    bottom: 0;
+    overflow: hidden;
+    display: block;
+    width: 100%;
+    text-align: end;
+    background-color: white;
+    border-top: 1px solid #ccc;
+
+    button {
+      margin: 10px;
+    }
   }
 }

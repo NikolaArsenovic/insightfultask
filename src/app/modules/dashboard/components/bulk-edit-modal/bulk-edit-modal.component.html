@@ -1,10 +1,14 @@
-<div class="dialog-wrapper">
+<form [formGroup]="bulkForm" class="dialog-wrapper">
   <div class="title mat-elevation-z6">
     <h1 mat-dialog-title>{{data.title}}</h1>
   </div>
-  <div class="content">
-    <ng-container *ngFor="let employee of data.employees">
-      <app-employee-edit-form [employee]="employee" [dates]="employeeService.getUniqueDays(employee.shifts)"></app-employee-edit-form>
+  <div formGroupName="employees"  class="content" *ngIf="data.employees">
+    <ng-container *ngFor="let employeeForm of employeesFormArray.controls; let i = index">
+      <app-employee-edit-form [editForm]="getEmployeeForm(i)" [employee]="data.employees[i]" [dates]="employeeService.getUniqueDays(data.employees[i].shifts)"></app-employee-edit-form>
     </ng-container>
   </div>
-</div>
+  <div class="action-buttons">
+    <button mat-raised-button color="primary" [disabled]="employeesFormArray.invalid" (click)="onSubmit()">Save</button>
+    <button mat-raised-button color="warn" (click)="onCancel()">Cancel</button>
+  </div>
+</form>

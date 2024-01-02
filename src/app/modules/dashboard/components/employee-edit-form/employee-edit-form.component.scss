@@ -1,7 +1,10 @@
 .employee-edit-form {
+  margin-bottom: 20px;
+  padding-bottom: 20px;
+  border-bottom: 3px solid #ccc;
 
   .employee-fields {
-    form {
+    .employee-form {
       display: flex;
       flex-wrap: wrap;
       justify-content: space-between;

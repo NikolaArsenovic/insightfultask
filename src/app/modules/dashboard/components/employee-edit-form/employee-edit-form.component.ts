@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, Input, OnInit, inject } from '@angular/core';
-import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormArray, FormControl, FormGroup, NG_VALUE_ACCESSOR, Validators } from '@angular/forms';
 
 import { Employee } from 'src/app/core/models/employee.model';
 import { EmployeeService } from 'src/app/core/services/employee.service';
@@ -8,37 +8,44 @@ import { EmployeeService } from 'src/app/core/services/employee.service';
   selector: 'app-employee-edit-form',
   templateUrl: './employee-edit-form.component.html',
   styleUrls: ['./employee-edit-form.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [
+  {
+    provide: NG_VALUE_ACCESSOR,
+    useExisting: EmployeeEditFormComponent,
+    multi: true
+  }
+]
 })
 export class EmployeeEditFormComponent implements OnInit {
   employeeService = inject(EmployeeService);
 
   @Input() employee?: Employee;
   @Input() dates: string[] = [];
+  @Input() editForm: FormGroup = new FormGroup({});
 
   get shiftsFormArray(): FormArray {
-    return this.shiftsForm.get('shifts') as FormArray;
+    return this.editForm?.controls['shifts'].get('shiftsArray') as FormArray;
+  }
+
+  get employeeForm(): FormGroup {
+    return this.editForm?.controls['employee'] as FormGroup;
   }
 
   selectedDate = '';
 
-  employeeForm = new FormGroup({
-                      name: new FormControl('', Validators.required),
-                      regularRate: new FormControl( 0, Validators.required),
-                      overtimeRate: new FormControl( 0, Validators.required),
-                    });
-
-  shiftsForm = new FormGroup({
-    shifts: new FormArray([]),
-  });
-
   ngOnInit(): void {
     if(this.employee) {
-      this.employeeForm.patchValue({
-        name: this.employee.name,
-        regularRate: this.employee.hourlyRate,
-        overtimeRate: this.employee.hourlyRateOvertime,
-      });
+      this.editForm?.addControl('employee', new FormGroup({
+        id: new FormControl(this.employee?.id),
+        name: new FormControl(this.employee?.name, Validators.required),
+        regularRate: new FormControl( this.employee?.hourlyRate, Validators.required),
+        overtimeRate: new FormControl(this.employee?.hourlyRateOvertime, Validators.required),
+      }));
+
+      this.editForm?.addControl('shifts', new FormGroup({
+        shiftsArray: new FormArray([]),
+      }));
 
       this.selectedDate = this.dates[0];
       this.addShiftsToForm();
@@ -52,7 +59,8 @@ export class EmployeeEditFormComponent implements OnInit {
 
     this.employeeService.getShiftsForDay(this.employee?.shifts, this.selectedDate).forEach((shift) => {
       this.shiftsFormArray.push(new FormGroup({
-        shiftId: new FormControl(shift.id),
+        id: new FormControl(shift.id),
+        employeeId: new FormControl(shift.employeeId),
         clockIn: new FormControl({value: this.formatTime(shift.clockIn), disabled: this.isShiftTimeFromDifferentDay(shift.clockIn)}, Validators.required),
         clockOut: new FormControl({value: this.formatTime(shift.clockOut), disabled: this.isShiftTimeFromDifferentDay(shift.clockOut)}, Validators.required),
       }));
@@ -60,11 +68,14 @@ export class EmployeeEditFormComponent implements OnInit {
   }
 
   calculateTotalTime(clockIn: string, clockOut: string, shiftId: string): string {
+
     const shift = this.employee?.shifts.find((shift) => shift.id === shiftId);
     if(!shift) return '00:00';
 
     const clockInDate = new Date(shift.clockIn).setHours(+clockIn.split(':')[0], +clockIn.split(':')[1]);
     const clockOutDate = new Date(shift.clockOut).setHours(+clockOut.split(':')[0], +clockOut.split(':')[1]);
+
+    if(isNaN(+clockInDate) || isNaN(+clockOutDate)) return '00:00';
 
     return this.employeeService.convertToHoursString(clockOutDate - clockInDate);
   }

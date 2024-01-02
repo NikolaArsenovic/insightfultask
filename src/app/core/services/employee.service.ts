@@ -147,7 +147,11 @@ export class EmployeeService {
     const hours = Math.floor(time / 1000 / 60 / 60);
     const minutes = Math.floor(time / 1000 / 60) - (hours * 60);
     const seconds = Math.floor(time / 1000) - (minutes * 60) - (hours * 60 * 60);
-    return hours + ':' + minutes + (withoutSeconds ? '' : ':' + seconds);
+    return this.addZeroToTime(hours)  + ':' + this.addZeroToTime(minutes) + (withoutSeconds ? '' : ':' + this.addZeroToTime(seconds));
+  }
+
+  addZeroToTime(time: number): string {
+    return time.toString().length === 1 ? '0' + time : time.toString();
   }
 
   saveValues(employeeChanges: {
@@ -176,6 +180,7 @@ export class EmployeeService {
       const employees = this.employees.getValue();
 
       responses.forEach((response) => {
+
         if('name' in response) {
           const employeeIndex = employees.findIndex((employee) => employee.id === response.id);
           const employee = employees[employeeIndex];
@@ -183,10 +188,12 @@ export class EmployeeService {
           employee.hourlyRate = response.hourlyRate;
           employee.hourlyRateOvertime = response.hourlyRateOvertime;
         } else {
+
           const employeeIndex = employees.findIndex((employee) => employee.id === response.employeeId);
           const shiftIndex = employees[employeeIndex].shifts.findIndex((shift) => shift.id === response.id);
           employees[employeeIndex].shifts[shiftIndex] = response;
         }
+
         this.calculateTotalPaymentForEmployees(employees);
         this.employees.next(employees);
         this.util.setSpinnerLoaderInProgress(false);

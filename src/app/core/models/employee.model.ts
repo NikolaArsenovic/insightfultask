@@ -1,3 +1,4 @@
+import { Shift } from "./shift.model";
 
 export interface Employee {
   id: string;
@@ -9,4 +10,6 @@ export interface Employee {
   clockedInTime?: string;
   paidForRegularHours?: number;
   paidForOvertimeHours?: number;
+
+  shifts: Shift[];
 }

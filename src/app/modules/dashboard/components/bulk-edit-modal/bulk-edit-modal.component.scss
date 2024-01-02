@@ -1,0 +1,13 @@
+.dialog-wrapper {
+  width: 960px;
+  height: 98vh;
+
+  .title {
+    position: sticky;
+    top: 0;
+    left: 0;
+  }
+  .content {
+    padding: 15px;
+  }
+}

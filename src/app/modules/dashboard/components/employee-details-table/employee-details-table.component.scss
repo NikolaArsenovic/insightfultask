@@ -1,5 +1,11 @@
+
+.mat-mdc-table-sticky {
+  border-top: 1px solid #ccc;
+}
+
 .employee-table-wrapper {
   table {
     width: 100%;
+    overflow: auto;
   }
 }

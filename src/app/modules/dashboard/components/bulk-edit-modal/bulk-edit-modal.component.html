@@ -1,0 +1,10 @@
+<div class="dialog-wrapper">
+  <div class="title mat-elevation-z6">
+    <h1 mat-dialog-title>{{data.title}}</h1>
+  </div>
+  <div class="content">
+    <ng-container *ngFor="let employee of data.employees">
+      <app-employee-edit-form [employee]="employee" [dates]="employeeService.getUniqueDays(employee.shifts)"></app-employee-edit-form>
+    </ng-container>
+  </div>
+</div>

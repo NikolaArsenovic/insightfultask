@@ -1,7 +1,10 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, OnInit, Output, inject } from '@angular/core';
 
+import { BulkEditModalComponent } from '../bulk-edit-modal/bulk-edit-modal.component';
+import { DialogData } from '../bulk-edit-modal/dialog-data.model';
 import { Employee } from 'src/app/core/models/employee.model';
 import { EmployeeService } from 'src/app/core/services/employee.service';
+import { MatDialog } from '@angular/material/dialog';
 import { SelectionModel } from '@angular/cdk/collections';
 
 @Component({
@@ -11,8 +14,11 @@ import { SelectionModel } from '@angular/cdk/collections';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class EmployeeDetailsTableComponent implements OnInit{
-  private employeeService = inject(EmployeeService);
-  private changeDetectorRef = inject(ChangeDetectorRef);
+  @Output() selectedEmployees = new EventEmitter<Employee[]>();
+
+  employeeService = inject(EmployeeService);
+  changeDetectorRef = inject(ChangeDetectorRef);
+  dialog = inject(MatDialog);
 
   employees: Employee[] = [];
 
@@ -26,6 +32,11 @@ export class EmployeeDetailsTableComponent implements OnInit{
     });
   }
 
+  toggleRow(employee: Employee) {
+    this.selection.toggle(employee);
+    this.selectedEmployees.emit(this.selection.selected);
+  }
+
   /** Whether the number of selected elements matches the total number of rows. */
   isAllSelected() {
     const numSelected = this.selection.selected.length;
@@ -37,10 +48,12 @@ export class EmployeeDetailsTableComponent implements OnInit{
   toggleAllRows() {
     if (this.isAllSelected()) {
       this.selection.clear();
+      this.selectedEmployees.emit(this.selection.selected);
       return;
     }
 
     this.selection.select(...this.employees);
+    this.selectedEmployees.emit(this.selection.selected);
   }
 
   /** The label for the checkbox on the passed row */
@@ -49,5 +62,17 @@ export class EmployeeDetailsTableComponent implements OnInit{
       return `${this.isAllSelected() ? 'deselect' : 'select'} all`;
     }
     return `${this.selection.isSelected(row) ? 'deselect' : 'select'}`;
+  }
+
+  openDialog() {
+
+    const data: DialogData = {
+      title: 'Bulk Edit',
+      employees: this.selection.selected
+    };
+
+    this.dialog.open(BulkEditModalComponent, {
+      data
+    });
   }
 }

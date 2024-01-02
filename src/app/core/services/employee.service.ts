@@ -164,6 +164,7 @@ export class EmployeeService {
       clockIn: number | undefined;
       clockOut: number | undefined;
       }[]) {
+      if(employeeChanges.length === 0 && shiftChanges.length === 0) return;
 
       const calls: Observable<Employee | Shift>[] = [];
       employeeChanges.forEach(employee => {

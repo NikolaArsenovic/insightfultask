@@ -1,0 +1,4 @@
+<div *ngIf="util.errorActive$ | async as error" class="error mat-elevation-z6">
+<span class="error-title"><b>Error:</b> {{error.status}} - {{error.statusText}}</span>
+<div (click)="close()" class="close">X</div>
+</div>

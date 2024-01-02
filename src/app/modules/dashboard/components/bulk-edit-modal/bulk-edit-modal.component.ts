@@ -10,6 +10,7 @@ import { DialogData } from './dialog-data.model';
 import { EmployeeService } from 'src/app/core/services/employee.service';
 import { FormArray, FormGroup } from '@angular/forms';
 import { Shift } from 'src/app/core/models/shift.model';
+import { MatDialogRef } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-bulk-edit-modal',
@@ -18,18 +19,19 @@ import { Shift } from 'src/app/core/models/shift.model';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BulkEditModalComponent implements OnInit {
-
   employeeService = inject(EmployeeService);
 
   bulkForm = new FormGroup({
     employees: new FormArray([]),
   });
 
+  saveButtonDisabled = false;
+
   get employeesFormArray(): FormArray {
     return this.bulkForm.get('employees') as FormArray;
   }
 
-  constructor(@Inject(DIALOG_DATA) public data: DialogData) {}
+  constructor(public dialogRef: MatDialogRef<BulkEditModalComponent>,@Inject(DIALOG_DATA) public data: DialogData) {}
 
   ngOnInit(): void {
     if(this.data.employees) {
@@ -37,9 +39,9 @@ export class BulkEditModalComponent implements OnInit {
     }
   }
 
-  getValuesToUpdate(): void {
-    const employeesToUpdate: { id: string, name: string | null; regularRate: number | null; overtimeRate: number | null }[] = [];
-    const shiftsToUpdate: {id: string; clockIn: number | null, clockOut: number | null}[] = [];
+  getValuesToUpdate() {
+    const employeesToUpdate: { id: string, name: string | undefined; hourlyRate: number | undefined; hourlyRateOvertime: number | undefined }[] = [];
+    const shiftsToUpdate: {id: string; clockIn: number | undefined, clockOut: number | undefined}[] = [];
 
     const dirtyEditForms = this.bulkForm.controls['employees'].controls.filter((control: FormGroup) => control.dirty);
 
@@ -55,9 +57,9 @@ export class BulkEditModalComponent implements OnInit {
 
         employeesToUpdate.push({
           id: id.value,
-          name: name.dirty ? name.value : null,
-          regularRate: regularRate.dirty ? regularRate.value : null,
-          overtimeRate: overtimeRate.dirty ? overtimeRate.value : null,
+          name: name.dirty ? name.value : undefined,
+          hourlyRate: regularRate.dirty ? regularRate.value : undefined,
+          hourlyRateOvertime: overtimeRate.dirty ? overtimeRate.value : undefined,
         });
       }
 
@@ -75,22 +77,25 @@ export class BulkEditModalComponent implements OnInit {
 
         shiftsToUpdate.push({
           id: id.value,
-          clockIn: clockIn.dirty ? this.prepareTimeForUpdate(clockIn.value, employeeId.value, id.value, 'clockIn') : null,
-          clockOut: clockOut.dirty ? this.prepareTimeForUpdate(clockOut.value, employeeId.value, id.value, 'clockOut') : null,
+          clockIn: clockIn.dirty ? this.prepareTimeForUpdate(clockIn.value, employeeId.value, id.value, 'clockIn') : undefined,
+          clockOut: clockOut.dirty ? this.prepareTimeForUpdate(clockOut.value, employeeId.value, id.value, 'clockOut') : undefined,
         });
       });
     });
 
-    console.log(employeesToUpdate);
-    console.log(shiftsToUpdate);
+    return {employeesToUpdate, shiftsToUpdate};
   }
 
   prepareTimeForUpdate(time: string, employeeId:string, shiftId: string, timeType: 'clockIn' | 'clockOut'): number {
+    const timeArray = time.split(':');
+    const hours = +timeArray[0];
+    const minutes = +timeArray[1];
+
     const shift = this.data.employees?.find(emp => emp.id === employeeId)?.shifts.find((shift: Shift) => shift.id === shiftId);
       if(timeType === 'clockIn') {
-        return new Date(shift?.clockIn || 0).getTime();
+        return new Date(shift?.clockIn || 0).setHours(hours, minutes);
       } else {
-        return new Date(shift?.clockOut || 0).getTime();
+        return new Date(shift?.clockOut || 0).setHours(hours, minutes);
       }
   }
 
@@ -108,9 +113,12 @@ export class BulkEditModalComponent implements OnInit {
   }
 
   onCancel() {
-  throw new Error('Method not implemented.');
+    this.dialogRef.close();
   }
   onSubmit() {
-    this.getValuesToUpdate();
+    this.saveButtonDisabled = true;
+    const values = this.getValuesToUpdate();
+    this.employeeService.saveValues(values.employeesToUpdate, values.shiftsToUpdate);
+    this.dialogRef.close();
   }
 }

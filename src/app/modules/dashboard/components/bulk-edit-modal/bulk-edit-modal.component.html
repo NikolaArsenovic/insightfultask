@@ -8,7 +8,7 @@
     </ng-container>
   </div>
   <div class="action-buttons">
-    <button mat-raised-button color="primary" [disabled]="employeesFormArray.invalid" (click)="onSubmit()">Save</button>
+    <button mat-raised-button color="primary" [disabled]="employeesFormArray.invalid || saveButtonDisabled" (click)="onSubmit()">Save</button>
     <button mat-raised-button color="warn" (click)="onCancel()">Cancel</button>
   </div>
 </form>

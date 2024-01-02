@@ -4,6 +4,7 @@ import { Injectable, inject } from '@angular/core';
 import { Employee } from '../models/employee.model';
 import { HttpClient } from '@angular/common/http';
 import { Shift } from '../models/shift.model';
+import { UtilService } from './util.service';
 
 // const employeesMock: Employee[] = [
 //   {
@@ -73,6 +74,7 @@ import { Shift } from '../models/shift.model';
 })
 export class EmployeeService {
   private http = inject(HttpClient);
+  private util = inject(UtilService);
 
   private employees: BehaviorSubject<Employee[]> = new BehaviorSubject<Employee[]>([]);
 
@@ -103,20 +105,17 @@ export class EmployeeService {
   }
 
   load(): void {
+    this.util.setSpinnerLoaderInProgress(true);
+
      const employees = this.http.get<Employee[]>('employees');
      const shifts = this.http.get<Shift[]>('shifts');
     forkJoin({employees, shifts}).subscribe(({employees, shifts}) => {
-
-      // this.setShiftsToEmployee(employeesMock, shiftsMock);
-      // this.calculateTotalPaymentForEmployees(employeesMock);
-
-      // this.employees.next(employeesMock);
-
 
       this.setShiftsToEmployee(employees, shifts);
       this.calculateTotalPaymentForEmployees(employees);
 
       this.employees.next(employees);
+      this.util.setSpinnerLoaderInProgress(false);
     });
   }
 
@@ -214,14 +213,56 @@ export class EmployeeService {
     return hours + ':' + minutes + (withoutSeconds ? '' : ':' + seconds);
   }
 
+  saveValues(employeeChanges: {
+    id: string;
+    name: string | undefined;
+    hourlyRate: number | undefined;
+    hourlyRateOvertime: number | undefined;
+    }[], shiftChanges: {
+      id: string;
+      clockIn: number | undefined;
+      clockOut: number | undefined;
+      }[]) {
+
+      const calls: Observable<Employee | Shift>[] = [];
+      employeeChanges.forEach(employee => {
+        calls.push(this.http.patch<Employee>('employees/' + employee.id, { name: employee.name, hourlyRate: employee.hourlyRate, hourlyRateOvertime: employee.hourlyRateOvertime }));
+      });
+
+      shiftChanges.forEach(shift => {
+        calls.push(this.http.patch<Shift>('shifts/' + shift.id, { clockIn: shift.clockIn, clockOut: shift.clockOut }));
+      });
+
+      this.util.setSpinnerLoaderInProgress(true);
+
+    forkJoin(calls).subscribe({next: (responses) => {
+      const employees = this.employees.getValue();
+
+      responses.forEach((response) => {
+        if('name' in response) {
+          const employeeIndex = employees.findIndex((employee) => employee.id === response.id);
+          const employee = employees[employeeIndex];
+          employee.name = response.name;
+          employee.hourlyRate = response.hourlyRate;
+          employee.hourlyRateOvertime = response.hourlyRateOvertime;
+        } else {
+          const employeeIndex = employees.findIndex((employee) => employee.id === response.employeeId);
+          const shiftIndex = employees[employeeIndex].shifts.findIndex((shift) => shift.id === response.id);
+          employees[employeeIndex].shifts[shiftIndex] = response;
+        }
+        this.calculateTotalPaymentForEmployees(employees);
+        this.employees.next(employees);
+        this.util.setSpinnerLoaderInProgress(false);
+      });
+    }});
+  }
+
   private calculateTotalPaymentForEmployees(employees: Employee[]) : void {
     let totalHours = 0;
     let totalOvertimeHours = 0;
 
     let regularPayment = 0;
     let overtimePayment = 0;
-
-    // const time = Date.now();
 
     // loop through all employees
     let i = 0;
@@ -264,10 +305,6 @@ export class EmployeeService {
 
       i++;
     }
-
-    // const testMil = Date.now() - time;
-    // console.log(testMil / 1000);
-
 
     this.totalClockedInHours.next(this.convertToHoursString(totalHours + totalOvertimeHours));
     this.totalRegularHoursPaid.next(regularPayment);

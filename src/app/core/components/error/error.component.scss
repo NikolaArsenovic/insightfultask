@@ -1,0 +1,24 @@
+.error {
+  width: 960px;
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  height: 50px;
+  display: flex;
+  background-color: #ffb3b3;
+  border: 1px solid #ff4d4d;
+  font-size: 15px;
+
+  color: #f44336;
+  justify-content: space-between;
+  align-items: center;
+  padding-right: 10px;
+  padding-left: 10px;
+
+  .close {
+    cursor: pointer;
+    font-size: 15px;
+    padding: 3px;
+  }
+}
+

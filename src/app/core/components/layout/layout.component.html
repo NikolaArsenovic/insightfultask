@@ -1,6 +1,8 @@
 <div class="layout">
 <app-header></app-header>
-  <div class="content">
-    <router-outlet></router-outlet>
+<app-error></app-error>
+  <div [ngSwitch]="util.spinnerLoaderInProgress$ | async" class="content">
+    <router-outlet *ngSwitchCase="false"></router-outlet>
+    <mat-spinner class="spinner" *ngSwitchCase="true"></mat-spinner>
   </div>
 </div>

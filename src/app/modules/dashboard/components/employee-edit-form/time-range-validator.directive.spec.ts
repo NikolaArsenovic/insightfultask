@@ -10,7 +10,6 @@ import { MatSelectModule } from '@angular/material/select';
 import { TimeRangeValidatorDirective } from './time-range-validator.directive';
 
 describe('TimeRangeValidatorDirective', () => {
-  let component: EmployeeEditFormComponent;
   let fixture: ComponentFixture<EmployeeEditFormComponent>;
   let inputEl: DebugElement;
   let renderer: Renderer2;
@@ -27,7 +26,6 @@ describe('TimeRangeValidatorDirective', () => {
     });
 
     fixture = TestBed.createComponent(EmployeeEditFormComponent);
-    component = fixture.componentInstance;
     inputEl = fixture.debugElement.query(By.css('input'));
     renderer = fixture.componentRef.injector.get<Renderer2>(Renderer2);
   });
